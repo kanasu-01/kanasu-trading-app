@@ -1,7 +1,7 @@
 import time
 import random
 
-class SyntheticTickGenerator:
+class MockTickGenerator:
     def __init__(self, instrument_token=12345, base_price=150, base_volume=10000):
         self.tk = instrument_token
         self.base_price = base_price

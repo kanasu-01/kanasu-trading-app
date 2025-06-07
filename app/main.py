@@ -1,40 +1,53 @@
 from app.services.brokers.angelone import AngelOneBroker
 from app.services.brokers.angelone_ws import AngelOneWebSocket
-from app.services.brokers.mock_ws import MockWebSocket  # ✅ Import Mock WebSocket
-
 from app.pubsub.tick_publisher import TickPublisher
 from app.strategies.camarilla import CamarillaStrategy
 from app.strategies.manager import StrategyManager
 from app.config import settings
 from logzero import logger
 
+# 🔁 For mock data
+from app.services.mock_tick_generator import MockTickGenerator
 
 def main():
-    broker = AngelOneBroker()
-    session_data = broker.login()
+    use_mock_data = True  # 🔁 Set this to False to use live WebSocket
+    symbol = "NSE:RELIANCE-EQ"
 
-    if not session_data:
-        logger.warning("Login failed. Falling back to mock data...")
-        run_mock_data()
-        return
 
-    logger.info("Login successful")
+    if use_mock_data:
+        logger.info("Using mock tick data...")
+        dummy_ohlc = {
+            "high": 820,
+            "low": 810,
+            "close": 815
+        }
+        camarilla = CamarillaStrategy(symbol=symbol)
+        camarilla.initialize(dummy_ohlc)
+        strategy_manager = StrategyManager(strategies=[camarilla])
+        TickPublisher.subscribe(strategy_manager.on_tick)
 
-    # Step 1: Initialize the strategy
-    camarilla = CamarillaStrategy()
-    dummy_ohlc = {
-        "high": 820,
-        "low": 810,
-        "close": 815
-    }
-    camarilla.initialize(dummy_ohlc)
+        mock_generator = MockTickGenerator()
+        mock_generator.start()
+    else:
+        broker = AngelOneBroker()
+        session_data = broker.login()
 
-    # Step 2: Register strategy with StrategyManager
-    strategy_manager = StrategyManager(strategies=[camarilla])
-    TickPublisher.subscribe(strategy_manager)
+        if not session_data:
+            logger.error("Login failed. Exiting...")
+            return
 
-    # Step 3: Try live WebSocket. On failure, fallback to mock.
-    try:
+        logger.info("Login successful")
+
+        camarilla = CamarillaStrategy(symbol=symbol)
+        dummy_ohlc = {
+            "high": 820,
+            "low": 810,
+            "close": 815
+        }
+        camarilla.initialize(dummy_ohlc)
+        strategy_manager = StrategyManager(strategies=[camarilla])
+        TickPublisher.subscribe(strategy_manager.on_tick)
+
         ws = AngelOneWebSocket(
             auth_token=session_data["auth_token"],
             api_key=settings.SMARTAPI_API_KEY,
@@ -42,32 +55,6 @@ def main():
             feed_token=session_data["feed_token"]
         )
         ws.connect()
-    except Exception as e:
-        logger.error(f"WebSocket connection failed: {e}")
-        run_mock_data()
-
-
-def run_mock_data():
-    """Run mock WebSocket tick stream"""
-    from time import sleep
-    from threading import Thread
-
-    camarilla = CamarillaStrategy()
-    dummy_ohlc = {
-        "high": 820,
-        "low": 810,
-        "close": 815
-    }
-    camarilla.initialize(dummy_ohlc)
-    strategy_manager = StrategyManager(strategies=[camarilla])
-    TickPublisher.subscribe(strategy_manager)
-
-    mock_ws = MockWebSocket()
-    t = Thread(target=mock_ws.start_stream)
-    t.start()
-    while True:
-        sleep(1)
-
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
 import threading
 import time
-from app.services.mock_tick_generator import SyntheticTickGenerator
+from app.services.mock_tick_generator import MockTickGenerator
 
 class SyntheticMockTickPublisher:
     def __init__(self, tick_subscriber, interval=0.5):
@@ -11,7 +11,7 @@ class SyntheticMockTickPublisher:
         self.tick_subscriber = tick_subscriber
         self.interval = interval
         self.running = False
-        self.tick_generator = SyntheticTickGenerator()
+        self.tick_generator = MockTickGenerator()
 
     def start(self):
         self.running = True
