@@ -1,9 +1,9 @@
 from typing import List
 from app.strategies.base import BaseStrategy
-from app.pubsub.tick_publisher import TickSubscriber
+from app.pubsub.tick_publisher import TickPublisher
 from logzero import logger
 
-class StrategyManager(TickSubscriber):
+class StrategyManager(TickPublisher):
     def __init__(self,strategies:list):
         self.strategies =strategies
 

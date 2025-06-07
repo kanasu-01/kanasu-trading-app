@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from app.pubsub.tick_publisher import TickSubscriber
+from app.pubsub.tick_publisher import TickPublisher
 
-class BaseStrategy(ABC, TickSubscriber):
+class BaseStrategy(ABC, TickPublisher):
+    ""
     def __init__(self, symbol: str):
         self.symbol = symbol
     
