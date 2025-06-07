@@ -1,0 +1,16 @@
+[E 250607 00:05:48 smartWebSocketV2:303] Error occurred during WebSocket connection: module 'websocket' has no attribute 'WebSocketApp'
+[I 250607 00:08:05 angelone_ws:15] WebSocket opened.
+[I 250607 00:08:05 angelone_ws:27] Tick received: {'subscription_mode': 1, 'exchange_type': 1, 'token': '3045', 'sequence_number': 16510801, 'exchange_timestamp': 1749206260000, 'last_traded_price': 81305, 'subscription_mode_val': 'LTP'}
+[W 250607 00:27:06 smartWebSocketV2:318] Attempting to resubscribe/reconnect (Attempt 1)...
+[E 250607 00:27:14 angelone_ws:30] WebSocket error: Connection closed
+[W 250607 00:27:14 smartWebSocketV2:342] Connection closed due to max retry attempts reached.
+[I 250607 00:27:30 angelone_ws:15] WebSocket opened.
+[I 250607 00:27:30 angelone_ws:27] Tick received: {'subscription_mode': 1, 'exchange_type': 1, 'token': '3045', 'sequence_number': 16510801, 'exchange_timestamp': 1749206260000, 'last_traded_price': 81305, 'subscription_mode_val': 'LTP'}
+[I 250607 10:55:26 angelone_ws:16] WebSocket opened.
+[W 250607 11:13:07 smartWebSocketV2:318] Attempting to resubscribe/reconnect (Attempt 1)...
+[E 250607 11:13:17 angelone_ws:38] WebSocket error: Connection closed
+[W 250607 11:13:17 smartWebSocketV2:342] Connection closed due to max retry attempts reached.
+[E 250607 11:13:17 angelone_ws:38] WebSocket error: Connection closed
+[W 250607 11:13:17 smartWebSocketV2:342] Connection closed due to max retry attempts reached.
+[E 250607 11:13:17 angelone_ws:38] WebSocket error: Connection closed
+[W 250607 11:13:17 smartWebSocketV2:342] Connection closed due to max retry attempts reached.

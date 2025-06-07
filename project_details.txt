@@ -1,0 +1,21 @@
+1.	I am planning to build a automatic trading application.
+1.1.	My trading app will be developing extensively, but as of now only intending to develop limited features. They are:
+1.2.	Login to angelone smartapi.
+1.3.	Fetch real time tick by tick data
+1.4.	Analyse this data to recommend stocks which comes under Camarilla trading strategy.
+1.5.	My trading app will be a Web app and the recommended stocks will be shown on the Web page.
+1.6.	Intraday strategies.
+1.7.	In future I may be using any other broker api, so my code need to be so flexible that easily without no code changes I should use other broker data api also.
+1.8.	Code samples should be according to the modern coding design patterns.
+1.9.	I will be using python for backend, react, html, tailwind, shadcn ui for frontend
+1.10.	I need guidance to achieve above scenarios. Guidance, any other recommendation, initial design and step by step project creation, code for the app
+2.	Future additions:
+2.1.	Paper trading
+2.2.	Back testing
+2.3.	Automatic trading
+2.4.	Fundamental data analysis
+2.5.	Technical analysis
+2.6.	Risk module
+2.7.	Journal
+2.8.	Strategy builder
+2.9.	Screeners for various strategies built based on the strategies
