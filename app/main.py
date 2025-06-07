@@ -1,49 +1,48 @@
-from fastapi import FastAPI
-from app.config import Settings
 from app.services.brokers.angelone import AngelOneBroker
-from app.pubsub.tick_publisher import TickSubscriber
-
-app = FastAPI()
-settings = Settings()
-broker= AngelOneBroker()
-session_data = broker.login()
-print("login successful")
-print("Session Data:", session_data)
-
 from app.services.brokers.angelone_ws import AngelOneWebSocket
+from app.pubsub.tick_publisher import TickPublisher
 
-if session_data:
+from app.strategies.camarilla import CamarillaStrategy
+from app.strategies.manager import StrategyManager
+
+from app.config import settings
+from logzero import logger
+
+
+def main():
+    broker = AngelOneBroker()
+    session_data = broker.login()
+
+    if not session_data:
+        logger.error("Login failed. Exiting...")
+        return
+
+    logger.info("Login successful")
+
+    # Step 1: Initialize the strategy
+    camarilla = CamarillaStrategy()
+
+    # Use dummy OHLC data for now
+    dummy_ohlc = {
+        "high": 820,
+        "low": 810,
+        "close": 815
+    }
+    camarilla.initialize(dummy_ohlc)
+
+    # Step 2: Register strategy with StrategyManager
+    strategy_manager = StrategyManager(strategies=[camarilla])
+    TickPublisher.subscribe(strategy_manager)
+
+    # Step 3: Start WebSocket
     ws = AngelOneWebSocket(
-        auth_token=session_data["data"]["jwtToken"].split(" ")[1],
+        auth_token=session_data["auth_token"],
         api_key=settings.SMARTAPI_API_KEY,
         client_code=settings.SMARTAPI_CLIENT_CODE,
-        feed_token=session_data["data"]["feedToken"]
+        feed_token=session_data["feed_token"]
     )
     ws.connect()
-    print("WebSocket connection established")
 
-@app.get("/")
-async def read_root():
-    return {"messgae": f"App is running with API key: {settings.smartapi_api_key}"}
 
-from app.strategies.manager import StrategyManager
-from app.strategies.camarilla import CamarillaStrategy
-
-# 1. Setup
-strategy_manager = StrategyManager()
-camarilla = CamarillaStrategy()
-strategy_manager.register(camarilla)
-
-# 2. Initialize with daily OHLC (mock for now)
-strategy_manager.initialize_all({
-    "high": 525,
-    "low": 510,
-    "close": 515
-})
-
-# 3. In WebSocket on_tick
-strategy_manager.process_tick({
-    "ltp": 526,
-    "token": "3045"
-})
-TickSubscriber().subscribe(camarilla)
+if __name__ == "__main__":
+    main()
